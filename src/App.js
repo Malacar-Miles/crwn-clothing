@@ -1,5 +1,6 @@
 import './App.css';
 import HomePage from "./pages/homepage/homepage.component";
+import ShopPage from './pages/shop/shop.component';
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 
 function App() {
@@ -7,14 +8,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/shop/hats" element={<HatsPage />} />
+        <Route path="/shop" element={<ShopPage />} />
       </Routes>
     </BrowserRouter>
   );
 }
-
-const HatsPage = () => (
-  <div><h1>HATS</h1></div>
-);
 
 export default App;
