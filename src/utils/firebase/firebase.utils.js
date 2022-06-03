@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithRedirect,
+  signInWithPopup,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -8,7 +15,7 @@ const firebaseConfig = {
   projectId: "crown-clothing-db-680be",
   storageBucket: "crown-clothing-db-680be.appspot.com",
   messagingSenderId: "1034702751610",
-  appId: "1:1034702751610:web:0ceb433b6af9cac4c9b8c3"
+  appId: "1:1034702751610:web:0ceb433b6af9cac4c9b8c3",
 };
 
 // eslint-disable-next-line
@@ -17,16 +24,21 @@ const firebaseApp = initializeApp(firebaseConfig);
 const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({
-  prompt: "select_account"
+  prompt: "select_account",
 });
 
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
   if (!userAuth) return;
 
   const userDocRef = doc(db, "users", userAuth.uid);
@@ -37,7 +49,12 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
     const createdAt = new Date();
 
     try {
-      await setDoc(userDocRef, { displayName, email, createdAt, ...additionalInformation });
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+        ...additionalInformation,
+      });
     } catch (error) {
       console.log("Error creating the user: ", error.message);
     }
@@ -48,5 +65,10 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
-  return await createUserWithEmailAndPassword (auth, email, password);
-}
+  return await createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+  return await signInWithEmailAndPassword(auth, email, password);
+};
