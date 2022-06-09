@@ -2,12 +2,13 @@ import "./product-card.styles.scss";
 import Button from "../button/button.component";
 import { useContext } from "react";
 import { CartContext } from "../../contexts/cart.context";
+import { CART_ACTION_TYPES } from "../../contexts/cart.context";
 
 const ProductCard = ({ product }) => {
   const { name, price, imageUrl } = product;
-  const { addItemToCart } = useContext(CartContext);
+  const { modifyCart } = useContext(CartContext);
   const addProductToCart = () => {
-    addItemToCart(product);
+    modifyCart({ type: CART_ACTION_TYPES.ADD, payload: product });
   }
 
   return(

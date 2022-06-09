@@ -1,3 +1,110 @@
+import { createContext, useReducer } from "react";
+
+const addCartItem = (cartItems, productToAdd) => {
+  const existingCartItem = cartItems.find(
+    (cartItem) => cartItem.id === productToAdd.id
+  );
+  if (existingCartItem)
+    return cartItems.map((cartItem) =>
+      cartItem.id === productToAdd.id
+        ? { ...cartItem, quantity: cartItem.quantity + 1 }
+        : cartItem
+    );
+  else return [...cartItems, { ...productToAdd, quantity: 1 }];
+};
+
+const subtractCartItem = (cartItems, productToSubtract) => {
+  const existingCartItem = cartItems.find(
+    (cartItem) => cartItem.id === productToSubtract.id
+  );
+  if (existingCartItem)
+    return cartItems.map((cartItem) =>
+      cartItem.id === productToSubtract.id
+        ? cartItem.quantity <= 1
+          ? { ...cartItem}
+          : { ...cartItem, quantity: cartItem.quantity - 1 }
+        : cartItem
+    );
+  else throw new Error("Item to be subtracted doesn't exist in the cart");
+};
+
+const removeCartItem = (cartItems, productToRemove) => {
+  const existingCartItem = cartItems.find(
+    (cartItem) => cartItem.id === productToRemove.id
+  );
+  if (existingCartItem)
+    return cartItems.filter((cartItem) => cartItem.id !== productToRemove.id);
+  else throw new Error("Item to be removed doesn't exist in the cart");
+};
+
+export const CartContext = createContext({
+  cartState: {},
+  modifyCart: () => null,
+});
+
+export const CART_ACTION_TYPES = {
+  ADD: "add_product",
+  SUBTRACT: "subtract_product",
+  REMOVE: "remove_product",
+  TOGGLE_OPEN: "toggle_cart_open",
+};
+
+const cartReducer = (state, action) => {
+  // console.log("executing cartReducer function");
+  const { type, payload } = action;
+  const { cartItems, isCartOpen } = state;
+  if (type === CART_ACTION_TYPES.TOGGLE_OPEN)
+    return { ...state, isCartOpen: !isCartOpen };
+  else {
+    let newCartItems = [];
+    switch (type) {
+      case CART_ACTION_TYPES.ADD:
+        newCartItems = addCartItem(cartItems, payload);
+        break;
+      case CART_ACTION_TYPES.SUBTRACT:
+        newCartItems = subtractCartItem(cartItems, payload);
+        break;
+      case CART_ACTION_TYPES.REMOVE:
+        newCartItems = removeCartItem(cartItems, payload);
+        break;
+      default:
+        throw new Error(`Incorrect cart action type: ${type}`);
+    }
+    let newCartCount = 0;
+    let newCartTotal = 0;
+    newCartItems.forEach((cartItem) => {
+      newCartCount += cartItem.quantity;
+      newCartTotal += cartItem.quantity * cartItem.price;
+    });
+    return {
+      cartItems: newCartItems,
+      cartCount: newCartCount,
+      cartTotal: newCartTotal,
+      isCartOpen: isCartOpen,
+    };
+  }
+};
+
+const INITIAL_STATE = {
+  cartItems: [],
+  cartCount: 0,
+  cartTotal: 0,
+  isCartOpen: false,
+};
+
+export const CartProvider = ({ children }) => {
+  const [cartState, modifyCart] = useReducer(cartReducer, INITIAL_STATE);
+
+  const value = {
+    cartState,
+    modifyCart,
+  };
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+};
+
+/* Old code, based on useState and useEffect
+
 import { createContext, useState, useEffect } from "react";
 
 const addCartItem = (cartItems, productToAdd) => {
@@ -84,3 +191,4 @@ export const CartProvider = ({ children }) => {
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
+*/

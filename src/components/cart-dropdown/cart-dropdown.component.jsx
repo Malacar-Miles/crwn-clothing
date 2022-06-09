@@ -8,7 +8,8 @@ import CartItem from "../cart-item/cart-item.component";
 import "./cart-dropdown.styles.scss";
 
 const CartDropdown = () => {
-  const { cartItems } = useContext(CartContext);
+  const { cartState } = useContext(CartContext);
+  const { cartItems } = cartState;
   const navigate = useNavigate();
   const goToCheckout = () => navigate("/checkout");
 

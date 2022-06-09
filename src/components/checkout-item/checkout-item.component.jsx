@@ -1,15 +1,16 @@
 import { useContext } from "react";
 import { CartContext } from "../../contexts/cart.context";
+import { CART_ACTION_TYPES } from "../../contexts/cart.context";
 
 import "./checkout-item.styles.scss";
 
 const CheckoutItem = ({ cartItem }) => {
-  const { id, name, quantity, price, imageUrl } = cartItem;
-  const { modifyCartItem } = useContext(CartContext);
+  const { name, quantity, price, imageUrl } = cartItem;
+  const { modifyCart } = useContext(CartContext);
 
-  const increaseHandler = () => modifyCartItem("increase", id);
-  const decreaseHandler = () => modifyCartItem("decrease", id);
-  const removeHandler = () => modifyCartItem("remove", id);
+  const increaseHandler = () => modifyCart({ type: CART_ACTION_TYPES.ADD, payload: cartItem });
+  const decreaseHandler = () => modifyCart({ type: CART_ACTION_TYPES.SUBTRACT, payload: cartItem });
+  const removeHandler = () => modifyCart({ type: CART_ACTION_TYPES.REMOVE, payload: cartItem });
 
   return(
     <div className="checkout-item-container">
