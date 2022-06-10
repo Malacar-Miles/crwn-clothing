@@ -1,31 +1,41 @@
-import { useContext } from "react";
-import { CartContext } from "../../contexts/cart.context";
-import { CART_ACTION_TYPES } from "../../contexts/cart.context";
+import { useContext } from 'react';
 
-import "./checkout-item.styles.scss";
+import { CartContext } from '../../contexts/cart.context';
+
+import {
+  CheckoutItemContainer,
+  ImageContainer,
+  BaseSpan,
+  Quantity,
+  Arrow,
+  Value,
+  RemoveButton,
+} from './checkout-item.styles';
 
 const CheckoutItem = ({ cartItem }) => {
-  const { name, quantity, price, imageUrl } = cartItem;
-  const { modifyCart } = useContext(CartContext);
+  const { name, imageUrl, price, quantity } = cartItem;
 
-  const increaseHandler = () => modifyCart({ type: CART_ACTION_TYPES.ADD, payload: cartItem });
-  const decreaseHandler = () => modifyCart({ type: CART_ACTION_TYPES.SUBTRACT, payload: cartItem });
-  const removeHandler = () => modifyCart({ type: CART_ACTION_TYPES.REMOVE, payload: cartItem });
+  const { clearItemFromCart, addItemToCart, removeItemToCart } =
+    useContext(CartContext);
 
-  return(
-    <div className="checkout-item-container">
-      <div className="image-container">
-        <img src={imageUrl} alt="" />
-      </div>
-      <div className="name">{name}</div>
-      <div className="quantity">
-        <span className="arrow" onClick={decreaseHandler}>&#10094;</span>
-        <span className="value">{quantity}</span>
-        <span className="arrow" onClick={increaseHandler}>&#10095;</span>
-      </div>
-      <div className="price">${price}</div>
-      <div className="remove-button" onClick={removeHandler}>&#10005;</div>
-    </div>
+  const clearItemHandler = () => clearItemFromCart(cartItem);
+  const addItemHandler = () => addItemToCart(cartItem);
+  const removeItemHandler = () => removeItemToCart(cartItem);
+
+  return (
+    <CheckoutItemContainer>
+      <ImageContainer>
+        <img src={imageUrl} alt={`${name}`} />
+      </ImageContainer>
+      <BaseSpan> {name} </BaseSpan>
+      <Quantity>
+        <Arrow onClick={removeItemHandler}>&#10094;</Arrow>
+        <Value>{quantity}</Value>
+        <Arrow onClick={addItemHandler}>&#10095;</Arrow>
+      </Quantity>
+      <BaseSpan> {price}</BaseSpan>
+      <RemoveButton onClick={clearItemHandler}>&#10005;</RemoveButton>
+    </CheckoutItemContainer>
   );
 };
 
